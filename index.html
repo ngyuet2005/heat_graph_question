@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>熱學概念：圖像與實驗誤差 | Heat: Graphs & Experimental Errors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fffaf0; --card:#fff; --ink:#1f2a44; --muted:#6b7590; --line:#ece5d4;
+  --red:#ff5a5f; --red-l:#ffe9e9; --orange:#ff8a3d; --orange-l:#fff0e4; --yellow:#ffd23f;
+  --blue:#2b7fff; --blue-l:#e6f0ff; --teal:#12b5a5; --teal-l:#e0f7f4; --purple:#7c5cff; --purple-l:#efeaff;
+  --green:#1fb26b; --green-l:#e3f9ec;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito","Noto Sans TC",system-ui,sans-serif;line-height:1.65;font-size:17px}
+body::before{content:"";position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(circle at 6% 4%,#d9f3ee 0,transparent 32%),radial-gradient(circle at 96% 15%,#ffe9a8 0,transparent 30%),radial-gradient(circle at 85% 96%,#ffe0e6 0,transparent 35%)}
+.lang-zh .en{display:none!important}
+.lang-en .zh{display:none!important}
+.lang-both .en{display:block;color:var(--muted);font-size:.9em;margin-top:.15em}
+.lang-both .inl .en,.lang-both .btn .en,.lang-both .opt .en.inl{display:inline;margin:0;font-size:.85em}
+.lang-both .inl .en::before,.lang-both .btn .en::before{content:" · "}
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 20px;background:rgba(255,250,240,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{font-weight:900;font-size:18px}
+nav.links{display:flex;gap:4px;flex-wrap:wrap}
+nav.links a{color:var(--ink);text-decoration:none;font-weight:800;font-size:14px;padding:6px 12px;border-radius:999px}
+nav.links a:hover{background:var(--teal-l);color:#0b8a7d}
+@media(max-width:760px){nav.links{display:none}}
+.lang-switch{display:flex;background:#fff;border:2px solid var(--ink);border-radius:999px;overflow:hidden;flex-shrink:0}
+.lang-switch button{border:0;background:none;font:inherit;font-weight:800;font-size:14px;padding:6px 12px;cursor:pointer;color:var(--ink)}
+.lang-switch button.on{background:var(--ink);color:#fff}
+main{max-width:1020px;margin:0 auto;padding:0 18px 80px}
+section{margin-top:54px;scroll-margin-top:70px}
+.hero{text-align:center;padding:48px 8px 4px}
+.hero h1{font-size:clamp(30px,5.5vw,50px);line-height:1.2;margin:0 0 10px;font-weight:900}
+.hero h1 .hl{background:linear-gradient(transparent 60%,var(--yellow) 60%)}
+.hero p{max-width:700px;margin:0 auto;color:var(--muted)}
+.tag{display:inline-block;font-weight:900;font-size:13px;letter-spacing:.06em;padding:4px 12px;border-radius:999px;margin-bottom:8px}
+.tag.t{background:var(--teal-l);color:#0b8a7d}.tag.o{background:var(--orange-l);color:#d9621a}.tag.b{background:var(--blue-l);color:var(--blue)}
+h2{font-size:clamp(24px,4vw,34px);margin:0 0 8px;font-weight:900;line-height:1.25}
+h3{font-size:20px;margin:0 0 8px;font-weight:900}
+.card{background:var(--card);border-radius:20px;padding:22px;border:2px solid var(--line);box-shadow:0 6px 0 var(--line),0 12px 28px rgba(31,42,68,.05)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:800px){.grid2{grid-template-columns:1fr}}
+.m{font-family:"Cambria Math","Times New Roman",serif;font-size:18px}
+.key{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+@media(max-width:760px){.key{grid-template-columns:1fr}}
+.key div{border-radius:16px;padding:14px;font-size:15.5px}
+.key b.m{display:block;font-size:20px;margin-bottom:4px}
+.k1{background:var(--blue-l)}.k2{background:var(--teal-l)}.k3{background:var(--purple-l)}
+/* explorer */
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+@media(max-width:760px){.exp-grid{grid-template-columns:1fr}}
+.sub{border-radius:16px;padding:12px 14px}
+.subA{background:#e9f2ff;border:2px solid #b9d4ff}.subB{background:#fff0e4;border:2px solid #ffc9a3}
+.sl{display:grid;grid-template-columns:110px 1fr 92px;align-items:center;gap:8px;font-size:14px;font-weight:700}
+.sl output{font-family:"Cambria Math",serif;font-size:15px;text-align:right}
+input[type=range]{width:100%;accent-color:var(--orange)}
+.subA input[type=range]{accent-color:var(--blue)}
+.readout{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:10px}
+.readout th,.readout td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+.readout th{color:var(--muted);font-weight:800}
+.ca{color:var(--blue);font-weight:900}.cb{color:#e2681a;font-weight:900}
+.btn{border:2px solid var(--ink);background:#fff;border-radius:999px;font:inherit;font-weight:800;padding:5px 14px;cursor:pointer;font-size:14px;color:var(--ink)}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{border-color:var(--line)}
+/* graph quiz */
+.gq{display:grid;grid-template-columns:minmax(260px,420px) 1fr;gap:18px;align-items:start}
+@media(max-width:800px){.gq{grid-template-columns:1fr}}
+.qno{display:inline-block;background:var(--ink);color:#fff;font-weight:900;border-radius:10px;padding:1px 10px;font-size:14px;margin-right:6px}
+.opts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.opt{border:2px solid var(--line);background:#fff;border-radius:14px;padding:9px 12px;text-align:left;font:inherit;font-size:15.5px;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--blue)}
+.opt.right{background:var(--green-l);border-color:var(--green)}
+.opt.wrong{background:var(--red-l);border-color:var(--red)}
+.fb{margin-top:10px;font-size:15.5px;background:#f5f8ff;border-radius:12px;padding:10px 14px;border:2px dashed #c9dafc}
+.list{display:flex;flex-direction:column;gap:18px;margin-top:16px}
+.score{font-weight:900;font-size:15px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:4px 14px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+/* error items */
+.expcard .setup{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
+@media(max-width:700px){.expcard .setup{grid-template-columns:1fr}}
+.formula{background:var(--blue-l);color:#1c4fa8;border-radius:14px;padding:10px 16px;font-family:"Cambria Math","Times New Roman",serif;font-size:21px;text-align:center;white-space:nowrap}
+.formula small{display:block;font-family:"Nunito","Noto Sans TC",sans-serif;font-size:12.5px;color:var(--muted);white-space:normal}
+.item{border-top:1px dashed var(--line);padding:12px 0}
+.item:first-of-type{border-top:0}
+.irow{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.itext{flex:1 1 360px;font-weight:600}
+.choices{display:flex;gap:6px;flex-shrink:0}
+.ch{border:2px solid var(--line);background:#fff;border-radius:12px;font:inherit;font-weight:800;font-size:14px;padding:5px 11px;cursor:pointer;color:var(--ink)}
+.ch:hover{border-color:var(--ink)}
+.ch.right{background:var(--green-l);border-color:var(--green)}
+.ch.wrong{background:var(--red-l);border-color:var(--red)}
+.ch[disabled]{cursor:default}
+.chain{display:inline-block;background:#fff6cc;border-radius:8px;padding:1px 8px;font-family:"Cambria Math","Times New Roman",serif;font-weight:700;margin-right:6px}
+.note{border-left:6px solid var(--yellow);background:#fffbe6;padding:12px 16px;border-radius:12px;margin:14px 0}
+.ok{color:var(--green);font-weight:900}.no{color:var(--red);font-weight:900}
+.svgbox svg{width:100%;height:auto;display:block;background:#fbfcff;border-radius:14px;border:2px solid #e8eefb}
+footer{text-align:center;color:var(--muted);font-size:14px;margin-top:50px}
+</style>
+</head>
+<body class="lang-zh">
+<header class="topbar">
+  <div class="brand inl">🌡️ <span class="zh">熱學概念題</span><span class="en">Heat Concepts</span></div>
+  <nav class="links">
+    <a href="#explore"><span class="zh">加熱曲線</span><span class="en">Heating curves</span></a>
+    <a href="#graphs"><span class="zh">圖像題</span><span class="en">Graph questions</span></a>
+    <a href="#errors"><span class="zh">實驗誤差</span><span class="en">Experimental errors</span></a>
+  </nav>
+  <div class="lang-switch" role="group" aria-label="language">
+    <button data-lang="zh" class="on">中文</button>
+    <button data-lang="both">中 / EN</button>
+    <button data-lang="en">EN</button>
+  </div>
+</header>
+
+<main>
+<div class="hero">
+  <h1><span class="zh">看<span class="hl">圖</span>比較 · 分析<span class="hl">誤差</span></span><span class="en">Read the <span class="hl">graph</span> · Analyse the <span class="hl">error</span></span></h1>
+  <p><span class="zh">比熱容量、熱容量和比潛熱的第二層次題目：由溫度–時間圖的斜率和平坦段比較大小，以及判斷實驗中各種處理會令計算值偏大還是偏小。</span>
+     <span class="en">Second-level questions on specific heat capacity, heat capacity and specific latent heat: compare them using the slopes and flat parts of temperature–time graphs, and decide whether experimental mistakes make the calculated value too large or too small.</span></p>
+</div>
+
+<!-- ============ KEY IDEAS + EXPLORER ============ -->
+<section id="explore">
+  <span class="tag t">PART 1</span>
+  <h2><span class="zh">讀懂加熱曲線</span><span class="en">Reading a heating curve</span></h2>
+  <div class="card">
+    <p style="margin-top:0"><span class="zh">用功率 P 的電熱器加熱質量 m 的物質（沒有熱量散失）：</span><span class="en">Heating a mass m with a heater of power P (no heat loss):</span></p>
+    <div class="key">
+      <div class="k1"><b class="m">斜率 slope = ΔT/Δt = P / (mc)</b><span class="zh">斜率<b>越大（越斜）</b> → mc <b>越小</b> → 熱容量越小。同質量同功率時，越斜 = c 越小。</span><span class="en">A <b>steeper</b> slope → <b>smaller</b> mc → smaller heat capacity. Same m and P: steeper = smaller c.</span></div>
+      <div class="k2"><b class="m">平坦段長度 = mℓ / P</b><span class="zh">物態改變時溫度不變。平坦段<b>越長</b> → mℓ <b>越大</b>。同質量同功率時，越長 = ℓ 越大。</span><span class="en">Temperature is constant during a change of state. A <b>longer</b> flat part → <b>larger</b> mℓ. Same m and P: longer = larger ℓ.</span></div>
+      <div class="k3"><b class="m">Q–ΔT 圖斜率 = C</b><span class="zh">如果 y 軸是能量、x 軸是溫度變化，斜率就是熱容量 C = mc。注意坐標軸對調時意思會反過來！</span><span class="en">If energy is on the y-axis and temperature change on the x-axis, the slope is the heat capacity C = mc. Swapping the axes reverses the meaning!</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <div class="head"><h3 style="margin:0"><span class="zh">🎛️ 互動：比較兩種物質的加熱曲線</span><span class="en">🎛️ Interactive: compare two substances' heating curves</span></h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="presetSame"><span class="zh">只改 c</span><span class="en">Change c only</span></button><button class="btn ghost" id="presetL"><span class="zh">只改 ℓ</span><span class="en">Change ℓ only</span></button><button class="btn ghost" id="presetM"><span class="zh">只改 m</span><span class="en">Change m only</span></button></div></div>
+    <p style="font-size:14px;color:var(--muted);margin:6px 0 0"><span class="zh">兩者由 −20 °C 的固體開始，在 0 °C 熔解，加熱至 60 °C。A 預設為冰／水。</span><span class="en">Both start as solids at −20 °C, melt at 0 °C and are heated to 60 °C. A is preset to ice/water.</span></p>
+    <div class="svgbox" style="margin-top:10px"><svg id="expSvg" viewBox="0 0 640 330"></svg></div>
+    <div class="sl" style="margin-top:12px"><span class="inl"><span class="zh">電熱器功率 P</span><span class="en">Heater power P</span></span><input type="range" id="sP" min="100" max="1000" step="50" value="300"><output id="oP"></output></div>
+    <div class="exp-grid">
+      <div class="sub subA"><div class="ca">A</div>
+        <div class="sl"><span>m (kg)</span><input type="range" id="sAm" min="0.1" max="1" step="0.05" value="0.5"><output id="oAm"></output></div>
+        <div class="sl"><span class="inl"><span class="zh">c 固態</span><span class="en">c solid</span></span><input type="range" id="sAcs" min="500" max="4500" step="100" value="2100"><output id="oAcs"></output></div>
+        <div class="sl"><span class="inl"><span class="zh">c 液態</span><span class="en">c liquid</span></span><input type="range" id="sAcl" min="500" max="4500" step="100" value="4200"><output id="oAcl"></output></div>
+        <div class="sl"><span>ℓ<sub>f</sub></span><input type="range" id="sAl" min="50000" max="400000" step="10000" value="330000"><output id="oAl"></output></div>
+      </div>
+      <div class="sub subB"><div class="cb">B</div>
+        <div class="sl"><span>m (kg)</span><input type="range" id="sBm" min="0.1" max="1" step="0.05" value="0.5"><output id="oBm"></output></div>
+        <div class="sl"><span class="inl"><span class="zh">c 固態</span><span class="en">c solid</span></span><input type="range" id="sBcs" min="500" max="4500" step="100" value="1000"><output id="oBcs"></output></div>
+        <div class="sl"><span class="inl"><span class="zh">c 液態</span><span class="en">c liquid</span></span><input type="range" id="sBcl" min="500" max="4500" step="100" value="2000"><output id="oBcl"></output></div>
+        <div class="sl"><span>ℓ<sub>f</sub></span><input type="range" id="sBl" min="50000" max="400000" step="10000" value="200000"><output id="oBl"></output></div>
+      </div>
+    </div>
+    <table class="readout" id="readout"></table>
+  </div>
+</section>
+
+<!-- ============ GRAPH QUESTIONS ============ -->
+<section id="graphs">
+  <div class="head"><div><span class="tag b">PART 2</span>
+    <h2><span class="zh">圖像題</span><span class="en">Graph questions</span></h2></div>
+    <span class="score" id="gScore"></span></div>
+  <div class="list" id="gList"></div>
+</section>
+
+<!-- ============ ERRORS ============ -->
+<section id="errors">
+  <div class="head"><div><span class="tag o">PART 3</span>
+    <h2><span class="zh">實驗誤差：計算值偏大還是偏小？</span><span class="en">Experimental errors: is the result too large or too small?</span></h2></div>
+    <span class="score" id="eScore"></span></div>
+  <div class="card">
+    <h3><span class="zh">🧭 解題方法</span><span class="en">🧭 How to tackle these</span></h3>
+    <ol style="margin:0;padding-left:1.3em">
+      <li><span class="zh">寫出計算公式，例如 ℓ<sub>v</sub> = Pt / m。</span><span class="en">Write down the formula used, e.g. ℓ<sub>v</sub> = Pt / m.</span></li>
+      <li><span class="zh">想想這個處理令<b>哪個量度值</b>變大或變小（例如 m 變小）。</span><span class="en">Decide which <b>measured quantity</b> becomes larger or smaller (e.g. m smaller).</span></li>
+      <li><span class="zh">放回公式：在分子 → 同方向；在分母 → 反方向。</span><span class="en">Put it back into the formula: in the numerator → same direction; in the denominator → opposite direction.</span></li>
+    </ol>
+    <div class="note" style="margin-bottom:0"><span class="zh">⭐ 常見規律：用電熱器的實驗，如果有<b>熱量散失</b>，計算時用的能量 Pt 比物質真正吸收的多，所以算出來的 c 或 ℓ 通常<b>偏大</b>。</span>
+      <span class="en">⭐ Common pattern: in heater experiments, if <b>heat is lost</b>, the energy Pt used in the calculation is more than the substance really absorbed, so the calculated c or ℓ is usually <b>too large</b>.</span></div>
+  </div>
+  <div class="list" id="eList"></div>
+</section>
+
+<footer><span class="zh">熱學概念題 · 高中物理程度 · 圖為示意</span><span class="en">Heat concept questions · High-school physics · Graphs are schematic</span></footer>
+</main>
+
+<script>
+let LANG='zh';
+const T=(zh,en)=>zh===en?zh:LANG==='zh'?zh:LANG==='en'?en:zh+'<span class="en">'+en+'</span>';
+const TP=p=>T(p[0],p[1]);
+const L=p=>LANG==='zh'?p[0]:LANG==='en'?p[1]:p[0]+' / '+p[1]; // plain text (for SVG)
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+/* ================= generic graph ================= */
+function graph(c){
+  const W=c.W||420,H=c.H||270,ml=52,mr=24,mt=18,mb=46;
+  const X=x=>ml+(x-c.x0)/(c.x1-c.x0)*(W-ml-mr);
+  const Y=y=>H-mb-(y-c.y0)/(c.y1-c.y0)*(H-mt-mb);
+  let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="Nunito,Noto Sans TC,sans-serif">`;
+  s+=`<defs><marker id="ar${c.id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#1f2a44"/></marker></defs>`;
+  (c.yt||[]).forEach(v=>{s+=`<line x1="${ml}" x2="${W-mr}" y1="${Y(v)}" y2="${Y(v)}" stroke="#e6ebf5" stroke-dasharray="3 4"/><text x="${ml-6}" y="${Y(v)+4}" font-size="11" text-anchor="end" fill="#6b7590">${v}</text>`;});
+  (c.xt||[]).forEach(v=>{s+=`<line y1="${mt}" y2="${H-mb}" x1="${X(v)}" x2="${X(v)}" stroke="#e6ebf5" stroke-dasharray="3 4"/><text x="${X(v)}" y="${H-mb+15}" font-size="11" text-anchor="middle" fill="#6b7590">${v}</text>`;});
+  s+=`<line x1="${ml}" y1="${H-mb}" x2="${W-mr+10}" y2="${H-mb}" stroke="#1f2a44" stroke-width="2" marker-end="url(#ar${c.id})"/>`;
+  s+=`<line x1="${ml}" y1="${H-mb}" x2="${ml}" y2="${mt-8}" stroke="#1f2a44" stroke-width="2" marker-end="url(#ar${c.id})"/>`;
+  s+=`<text x="${(ml+W-mr)/2}" y="${H-8}" font-size="12.5" font-weight="800" text-anchor="middle" fill="#1f2a44">${esc(L(c.xl))}</text>`;
+  s+=`<text transform="translate(14 ${(mt+H-mb)/2}) rotate(-90)" font-size="12.5" font-weight="800" text-anchor="middle" fill="#1f2a44">${esc(L(c.yl))}</text>`;
+  c.series.forEach(se=>{
+    const pts=se.pts.map(p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' ');
+    s+=`<polyline points="${pts}" fill="none" stroke="${se.color}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" ${se.dash?'stroke-dasharray="7 6"':''}/>`;
+    if(se.label){const p=se.lp||se.pts[se.pts.length-1];s+=`<text x="${X(p[0])+6}" y="${Y(p[1])+4}" font-size="15" font-weight="900" fill="${se.color}">${esc(Array.isArray(se.label)?L(se.label):se.label)}</text>`;}
+  });
+  (c.ann||[]).forEach(a=>{s+=`<text x="${X(a.x)}" y="${Y(a.y)}" font-size="${a.fs||12}" font-weight="800" text-anchor="${a.anchor||'middle'}" fill="${a.color||'#6b7590'}">${esc(Array.isArray(a.t)?L(a.t):a.t)}</text>`;});
+  (c.brk||[]).forEach(b=>{const y=Y(b.y);s+=`<path d="M${X(b.x0)} ${y} v-6 M${X(b.x0)} ${y-3} H${X(b.x1)} M${X(b.x1)} ${y} v-6" stroke="${b.color||'#7c5cff'}" stroke-width="2" fill="none"/><text x="${(X(b.x0)+X(b.x1))/2}" y="${y-9}" font-size="12" font-weight="900" text-anchor="middle" fill="${b.color||'#7c5cff'}">${esc(Array.isArray(b.t)?L(b.t):b.t)}</text>`;});
+  return s+'</svg>';
+}
+const tT=['時間 t / min','Time t / min'], tTemp=['溫度 T / °C','Temperature T / °C'];
+
+/* ================= explorer ================= */
+const ids=['P','Am','Acs','Acl','Al','Bm','Bcs','Bcl','Bl'];
+const el=id=>document.getElementById('s'+id);
+function curve(m,cs,cl,lf,P){const t1=m*cs*20/P/60,t2=m*lf/P/60,t3=m*cl*60/P/60;return {t1,t2,t3,pts:[[0,-20],[t1,0],[t1+t2,0],[t1+t2+t3,60]]};}
+function drawExplorer(){
+  const v={};ids.forEach(i=>v[i]=+el(i).value);
+  document.getElementById('oP').textContent=v.P+' W';
+  ['A','B'].forEach(k=>{document.getElementById('o'+k+'m').textContent=v[k+'m'].toFixed(2)+' kg';
+    document.getElementById('o'+k+'cs').textContent=v[k+'cs'];document.getElementById('o'+k+'cl').textContent=v[k+'cl'];
+    document.getElementById('o'+k+'l').textContent=(v[k+'l']/1e5).toFixed(1)+'×10⁵';});
+  const A=curve(v.Am,v.Acs,v.Acl,v.Al,v.P),B=curve(v.Bm,v.Bcs,v.Bcl,v.Bl,v.P);
+  const tmax=Math.max(A.pts[3][0],B.pts[3][0])*1.08;
+  const step=tmax>40?10:tmax>20?5:tmax>8?2:1, xt=[];for(let x=0;x<=tmax;x+=step)xt.push(x);
+  document.getElementById('expSvg').outerHTML=graph({id:'exp',W:640,H:330,x0:0,x1:tmax,y0:-25,y1:70,xt,yt:[-20,0,20,40,60],xl:tT,yl:tTemp,
+    series:[{pts:A.pts,color:'#2b7fff',label:'A'},{pts:B.pts,color:'#ff8a3d',label:'B',dash:true}]}).replace('<svg','<svg id="expSvg"');
+  const f=x=>x.toFixed(x>=10?1:2);
+  document.getElementById('readout').innerHTML=`<tr><th></th><th>${T('固態斜率','Solid slope')}<br>(°C/min)</th><th>${T('熔解時間','Melting time')}<br>(min)</th><th>${T('液態斜率','Liquid slope')}<br>(°C/min)</th></tr>
+   <tr><td class="ca">A</td><td>${f(20/A.t1)}</td><td>${f(A.t2)}</td><td>${f(60/A.t3)}</td></tr>
+   <tr><td class="cb">B</td><td>${f(20/B.t1)}</td><td>${f(B.t2)}</td><td>${f(60/B.t3)}</td></tr>`;
+}
+ids.forEach(i=>el(i).addEventListener('input',drawExplorer));
+function preset(b){const base={P:300,Am:0.5,Acs:2100,Acl:4200,Al:330000};Object.assign(base,{Bm:0.5,Bcs:2100,Bcl:4200,Bl:330000},b);ids.forEach(i=>el(i).value=base[i]);drawExplorer();}
+document.getElementById('presetSame').onclick=()=>preset({Bcs:1000,Bcl:2100});
+document.getElementById('presetL').onclick=()=>preset({Bl:160000});
+document.getElementById('presetM').onclick=()=>preset({Bm:0.25});
+
+/* ================= graph questions ================= */
+const GQ=[
+{q:['質量相同的液體 A 和 B，用相同的電熱器加熱，溫度隨時間的變化如圖。哪一種液體的比熱容量較大？','Liquids A and B have equal mass and are heated by identical heaters. Their temperatures vary with time as shown. Which liquid has the larger specific heat capacity?'],
+ g:{x0:0,x1:11,y0:0,y1:90,xt:[0,2,4,6,8,10],yt:[20,40,60,80],xl:tT,yl:tTemp,series:[{pts:[[0,20],[10,80]],color:'#2b7fff',label:'A'},{pts:[[0,20],[10,50]],color:'#ff8a3d',label:'B'}]},
+ o:[['A','A'],['B','B'],['兩者相同','They are equal'],['資料不足，無法判斷','Not enough information']],a:1,
+ e:['斜率 = P/(mc)。P 和 m 相同，斜率越小 c 越大。A 的斜率 6 °C/min，B 只有 3 °C/min，所以 c<sub>B</sub> = 2c<sub>A</sub>。','Slope = P/(mc). With the same P and m, the smaller slope means the larger c. A rises 6 °C/min, B only 3 °C/min, so c<sub>B</sub> = 2c<sub>A</sub>.']},
+{q:['相同電熱器加熱兩杯同一種液體 X 和 Y，結果如圖。哪項正確？','Identical heaters warm two samples X and Y of the same liquid, giving the graph. Which statement is correct?'],
+ g:{x0:0,x1:11,y0:0,y1:90,xt:[0,2,4,6,8,10],yt:[20,40,60,80],xl:tT,yl:tTemp,series:[{pts:[[0,20],[8,80]],color:'#12b5a5',label:'X'},{pts:[[0,20],[10,40]],color:'#7c5cff',label:'Y'}]},
+ o:[['X 的質量較小','X has the smaller mass'],['Y 的質量較小','Y has the smaller mass'],['X 的比熱容量較小','X has the smaller specific heat capacity'],['兩者質量相同','They have equal mass']],a:0,
+ e:['同一種液體，c 相同。斜率 = P/(mc)，X 較斜，所以 X 的 m 較小（熱容量 mc 也較小）。','Same liquid, so same c. Slope = P/(mc); X is steeper, so X has the smaller m (and smaller heat capacity mc).']},
+{q:['物體 P 和 Q 吸收的能量與溫度上升的關係如圖（y 軸是能量）。哪項正確？','The graph shows energy absorbed against temperature rise for objects P and Q (energy on the y-axis). Which statement is correct?'],
+ g:{x0:0,x1:22,y0:0,y1:9,xt:[0,5,10,15,20],yt:[2,4,6,8],xl:['溫度上升 ΔT / °C','Temperature rise ΔT / °C'],yl:['能量 Q / kJ','Energy Q / kJ'],series:[{pts:[[0,0],[20,8]],color:'#ff5a5f',label:'P'},{pts:[[0,0],[20,3]],color:'#2b7fff',label:'Q'}]},
+ o:[['P 的熱容量較大','P has the larger heat capacity'],['Q 的熱容量較大','Q has the larger heat capacity'],['P 的比熱容量一定較大','P must have the larger specific heat capacity'],['兩者熱容量相同','They have the same heat capacity']],a:0,
+ e:['這裏斜率 = Q/ΔT = 熱容量 C。P 較斜，所以 C<sub>P</sub> 較大（0.4 kJ/°C 對 0.15 kJ/°C）。但不知道質量，所以不能判斷比熱容量 c 的大小。','Here slope = Q/ΔT = heat capacity C. P is steeper, so C<sub>P</sub> is larger (0.4 kJ/°C vs 0.15 kJ/°C). Without the masses we cannot compare the specific heat capacities c.']},
+{q:['兩種液體 A（0.2 kg）和 B（0.4 kg）用相同電熱器加熱，結果如圖。c<sub>A</sub> : c<sub>B</sub> 是多少？','Liquids A (0.2 kg) and B (0.4 kg) are heated by identical heaters, giving the graph. What is c<sub>A</sub> : c<sub>B</sub>?'],
+ g:{x0:0,x1:11,y0:0,y1:70,xt:[0,2,4,6,8,10],yt:[20,40,60],xl:tT,yl:tTemp,series:[{pts:[[0,20],[10,60]],color:'#2b7fff',label:'A'},{pts:[[0,20],[10,40]],color:'#ff8a3d',label:'B'}]},
+ o:[['1 : 1','1 : 1'],['1 : 2','1 : 2'],['2 : 1','2 : 1'],['1 : 4','1 : 4']],a:0,
+ e:['斜率 = P/(mc) ⇒ c = P/(m × 斜率)。A：0.2 × 4 = 0.8；B：0.4 × 2 = 0.8。分母相同，所以 c<sub>A</sub> : c<sub>B</sub> = 1 : 1。陷阱：不能只看哪條較斜！','Slope = P/(mc) ⇒ c = P/(m × slope). A: 0.2 × 4 = 0.8; B: 0.4 × 2 = 0.8. Equal, so c<sub>A</sub> : c<sub>B</sub> = 1 : 1. Trap: don\'t judge by steepness alone!']},
+{q:['用 200 W 電熱器加熱 0.1 kg、−20 °C 的冰，直至全部變成蒸汽。兩段平坦部分分別維持了約 2.8 min 和 18.8 min。由此可知：','0.1 kg of ice at −20 °C is heated by a 200 W heater until it has all turned into steam. The two flat parts last about 2.8 min and 18.8 min. What can we conclude?'],
+ g:{x0:0,x1:27,y0:-30,y1:120,xt:[0,5,10,15,20,25],yt:[-20,0,50,100],xl:tT,yl:tTemp,series:[{pts:[[0,-20],[0.35,0],[3.13,0],[6.63,100],[25.4,100]],color:'#12b5a5'}],
+   brk:[{x0:0.35,x1:3.13,y:12,t:'2.8'},{x0:6.63,x1:25.4,y:112,t:'18.8'}],ann:[{x:1.8,y:-12,t:['熔解','melting'],color:'#12b5a5'},{x:16,y:88,t:['沸騰','boiling'],color:'#12b5a5'}]},
+ o:[['ℓ<sub>v</sub> 約為 ℓ<sub>f</sub> 的 6.7 倍','ℓ<sub>v</sub> is about 6.7 times ℓ<sub>f</sub>'],['ℓ<sub>f</sub> 約為 ℓ<sub>v</sub> 的 6.7 倍','ℓ<sub>f</sub> is about 6.7 times ℓ<sub>v</sub>'],['水的比熱容量是冰的 6.7 倍','Water\'s specific heat capacity is 6.7 times ice\'s'],['平坦段時電熱器沒有供熱','The heater supplies no energy during the flat parts']],a:0,
+ e:['平坦段時間 = mℓ/P。m 和 P 相同，所以時間比 = ℓ 之比：18.8 / 2.8 ≈ 6.7。（真實值 2.26 × 10⁶ / 3.34 × 10⁵ ≈ 6.8）','Flat-part time = mℓ/P. With the same m and P, the time ratio equals the ℓ ratio: 18.8 / 2.8 ≈ 6.7. (Actual: 2.26 × 10⁶ / 3.34 × 10⁵ ≈ 6.8)']},
+{q:['冰被穩定加熱的溫度–時間圖如下。比較冰段（AB）和水段（CD）的斜率，c<sub>冰</sub> : c<sub>水</sub> 是多少？','A steadily heated block of ice gives this temperature–time graph. Comparing the slopes of the ice part (AB) and the water part (CD), what is c<sub>ice</sub> : c<sub>water</sub>?'],
+ g:{x0:0,x1:15,y0:-50,y1:55,xt:[0,2,4,6,8,10,12,14],yt:[-40,-20,0,20,40],xl:tT,yl:tTemp,series:[{pts:[[0,-40],[2,0],[9,0],[13,40]],color:'#2b7fff'}],
+   ann:[{x:0.4,y:-44,t:'A',fs:14,color:'#1f2a44'},{x:2,y:5,t:'B',fs:14,color:'#1f2a44'},{x:9,y:5,t:'C',fs:14,color:'#1f2a44'},{x:13.5,y:42,t:'D',fs:14,color:'#1f2a44'}]},
+ o:[['1 : 2','1 : 2'],['2 : 1','2 : 1'],['1 : 1','1 : 1'],['不能比較，因為物態不同','Cannot compare — different states']],a:0,
+ e:['熔解前後質量不變，功率相同。冰段斜率 40/2 = 20 °C/min，水段 40/4 = 10 °C/min。c ∝ 1/斜率，所以 c<sub>冰</sub> : c<sub>水</sub> = 1 : 2。','Mass doesn\'t change on melting and P is the same. Ice slope 40/2 = 20 °C/min, water slope 40/4 = 10 °C/min. c ∝ 1/slope, so c<sub>ice</sub> : c<sub>water</sub> = 1 : 2.']},
+{q:['質量相同的固體 A 和 B 用相同電熱器加熱，溫度–時間圖如下。哪項正確？','Solids A and B of equal mass are heated by identical heaters, giving the graph. Which statement is correct?'],
+ g:{x0:0,x1:11,y0:0,y1:115,xt:[0,2,4,6,8,10],yt:[20,60,80,100],xl:tT,yl:tTemp,series:[{pts:[[0,20],[2,60],[8,60],[10,100]],color:'#2b7fff',label:'A'},{pts:[[0,20],[4,80],[7,80],[8,100]],color:'#ff8a3d',label:'B',dash:true}]},
+ o:[['A 的熔解比潛熱是 B 的 2 倍','A\'s specific latent heat of fusion is twice B\'s'],['A 固態時的比熱容量比 B 大','A has a larger specific heat capacity than B as a solid'],['B 液態時的比熱容量比 A 大','B has a larger specific heat capacity than A as a liquid'],['A 的熔點比 B 高','A has a higher melting point than B']],a:0,
+ e:['平坦段：A 6 min、B 3 min → ℓ<sub>A</sub> = 2ℓ<sub>B</sub> ✔。固態斜率 A 20、B 15 °C/min → A 較斜，c 較<b>小</b>。液態斜率 A 20、B 20 °C/min → c 相同。熔點 A 60 °C < B 80 °C。','Flat parts: A 6 min, B 3 min → ℓ<sub>A</sub> = 2ℓ<sub>B</sub> ✔. Solid slopes A 20, B 15 °C/min → A is steeper so its c is <b>smaller</b>. Liquid slopes A 20, B 20 °C/min → same c. Melting points A 60 °C < B 80 °C.']},
+{q:['熔化了的物質放在室溫下冷卻，溫度–時間圖如下。在 BC 段時：','A molten substance cools at room temperature, giving this graph. During BC:'],
+ g:{x0:0,x1:22,y0:20,y1:100,xt:[0,5,10,15,20],yt:[30,50,70,90],xl:tT,yl:tTemp,series:[{pts:[[0,90],[1,84],[2,79],[3,75],[4,72],[5,70],[12,70],[13,63],[14,57],[15,52],[16,48],[18,42],[20,38],[21,36.5]],color:'#7c5cff'}],
+   ann:[{x:5,y:75,t:'B',fs:14,color:'#1f2a44'},{x:12,y:75,t:'C',fs:14,color:'#1f2a44'}]},
+ o:[['物質正在凝固，釋放潛熱，所以溫度不變','The substance is solidifying, releasing latent heat, so its temperature stays constant'],['物質停止向周圍散熱','The substance stops losing heat to the surroundings'],['物質從周圍吸收熱量','The substance absorbs heat from the surroundings'],['物質的比熱容量變成零','The substance\'s specific heat capacity becomes zero']],a:0,
+ e:['BC 段物質仍在向周圍散熱，但凝固時釋放的潛熱剛好補回散失的熱，所以溫度保持在凝固點（70 °C）。','During BC the substance is still losing heat, but the latent heat released on solidifying makes up for it, so the temperature stays at the freezing point (70 °C).']},
+{q:['把熱水 P 和冷水 Q 放在一起（只互相交換熱量），溫度變化如圖。哪項正確？','Hot water P and cold water Q exchange heat only with each other. Their temperatures change as shown. Which is correct?'],
+ g:{x0:0,x1:11,y0:0,y1:70,xt:[0,2,4,6,8,10],yt:[10,30,60],xl:tT,yl:tTemp,series:[{pts:[[0,60],[1,49],[2,41.5],[3,36.5],[4,33.5],[6,31],[8,30.2],[10,30]],color:'#ff5a5f',label:'P'},{pts:[[0,10],[1,17.3],[2,22.3],[3,25.7],[4,27.7],[6,29.3],[8,29.9],[10,30]],color:'#2b7fff',label:'Q',lp:[10,26]}]},
+ o:[['Q 的熱容量是 P 的 1.5 倍','Q\'s heat capacity is 1.5 times P\'s'],['P 的熱容量是 Q 的 1.5 倍','P\'s heat capacity is 1.5 times Q\'s'],['兩者熱容量相同','They have equal heat capacities'],['P 放出的熱比 Q 吸收的多','P loses more heat than Q gains']],a:0,
+ e:['P 放出的熱 = Q 吸收的熱：C<sub>P</sub> × (60 − 30) = C<sub>Q</sub> × (30 − 10)，所以 C<sub>Q</sub> / C<sub>P</sub> = 30/20 = 1.5。溫度變化較小的一方熱容量較大。','Heat lost by P = heat gained by Q: C<sub>P</sub> × (60 − 30) = C<sub>Q</sub> × (30 − 10), so C<sub>Q</sub> / C<sub>P</sub> = 30/20 = 1.5. The one whose temperature changes less has the larger heat capacity.']},
+{q:['用電熱器加熱一杯水。虛線是假設沒有熱量散失的結果，實線是實際結果。為甚麼實線越來越平？','A beaker of water is heated by a heater. The dashed line assumes no heat loss; the solid line is the real result. Why does the solid line level off?'],
+ g:{x0:0,x1:22,y0:0,y1:100,xt:[0,5,10,15,20],yt:[20,40,60,80],xl:tT,yl:tTemp,series:[{pts:[[0,20],[17,95]],color:'#6b7590',dash:true,label:['理想','ideal'],lp:[13,80]},{pts:[[0,20],[2,28.2],[4,35.4],[6,41.5],[8,46.8],[10,51.3],[12,55.1],[14,58.4],[16,61.2],[18,63.6],[20,65.6]],color:'#ff8a3d',label:['實際','real'],lp:[18,55]}]},
+ o:[['水溫越高，散熱到周圍越快','The hotter the water, the faster it loses heat to the surroundings'],['水的比熱容量隨溫度大幅增加','Water\'s specific heat capacity rises sharply with temperature'],['電熱器的功率逐漸下降','The heater\'s power gradually falls'],['水已經開始沸騰','The water has started to boil']],a:0,
+ e:['散熱速率隨水和周圍的溫差增加。當散熱速率接近電熱器的功率時，水溫就幾乎不再上升（這裏遠低於 100 °C，所以不是沸騰）。','The rate of heat loss increases with the temperature difference between the water and its surroundings. When it approaches the heater\'s power, the temperature barely rises (here well below 100 °C, so it is not boiling).']}
+];
+const gAns={};
+function renderGQ(){
+  const L0='ABCD';
+  document.getElementById('gList').innerHTML=GQ.map((q,i)=>{
+    const done=gAns[i]!==undefined;
+    const opts=q.o.map((o,j)=>{let cls='';if(done){if(j===q.a)cls='right';else if(j===gAns[i])cls='wrong';}
+      return `<button class="opt ${cls}" data-g="${i}" data-j="${j}"><b>${L0[j]}.</b> ${TP(o)}</button>`;}).join('');
+    const fb=done?`<div class="fb">${gAns[i]===q.a?'<span class="ok">✔ '+T('正確！','Correct!')+'</span>':'<span class="no">✘ '+T('答案是 ','The answer is ')+L0[q.a]+'</span>'} ${TP(q.e)}</div>`:'';
+    return `<div class="card gq"><div class="svgbox">${graph(Object.assign({id:'g'+i},q.g))}</div><div><div><span class="qno">G${i+1}</span>${TP(q.q)}</div><div class="opts">${opts}</div>${fb}</div></div>`;
+  }).join('');
+  document.querySelectorAll('#gList .opt').forEach(b=>b.onclick=()=>{const i=+b.dataset.g;if(gAns[i]!==undefined)return;gAns[i]=+b.dataset.j;renderGQ();});
+  const n=Object.keys(gAns).length,c=Object.entries(gAns).filter(([i,j])=>GQ[i].a===j).length;
+  document.getElementById('gScore').innerHTML=T('得分','Score')+` ${c} / ${GQ.length}`;
+}
+
+/* ================= error analysis ================= */
+const UP=0,DOWN=1,NONE=2;
+const EXP=[
+{icon:'🔥',t:['實驗一：用電熱器量度水的比熱容量','Experiment 1: Specific heat capacity of water with a heater'],
+ s:['把電熱器放入發泡膠杯的水中，記錄功率 P、加熱時間 t、水的質量 m 和溫度上升 ΔT。','A heater is placed in water in a polystyrene cup. Record power P, heating time t, mass of water m and temperature rise ΔT.'],
+ f:'c = Pt / (mΔT)',fn:['ΔT 在分母','ΔT is in the denominator'],
+ items:[
+  {x:['熱量散失到周圍','Heat is lost to the surroundings'],a:UP,c:'ΔT ↓ ⇒ c ↑',e:['部分能量沒有被水吸收，所以 ΔT 比應有的小。','Some energy is not absorbed by the water, so ΔT is smaller than it should be.']},
+  {x:['沒有攪拌，而且溫度計放在電熱器旁邊','The water is not stirred and the thermometer is next to the heater'],a:DOWN,c:'ΔT ↑ ⇒ c ↓',e:['電熱器附近的水特別熱，溫度計讀數偏高，量得的 ΔT 偏大。','Water near the heater is hotter, so the reading is too high and the measured ΔT is too large.']},
+  {x:['關掉電熱器後立即讀取最終溫度，沒有等溫度升到最高','The final temperature is read as soon as the heater is switched off, not at its highest value'],a:UP,c:'ΔT ↓ ⇒ c ↑',e:['電熱器關掉後本身仍然很熱，會繼續把熱傳給水。太早讀數會令 ΔT 偏小。','The heater is still hot after switching off and keeps warming the water. Reading too early makes ΔT too small.']},
+  {x:['電熱器沒有完全浸在水中','The heater is not fully immersed in the water'],a:UP,c:'ΔT ↓ ⇒ c ↑',e:['露出水面的部分把能量散失到空氣中，水吸收的能量比 Pt 少。','The exposed part loses energy to the air, so the water absorbs less than Pt.']},
+  {x:['用電熱器標示的額定功率計算，但實際電壓比額定值低','The rated power is used, but the actual supply voltage is lower than rated'],a:UP,c:['計算用的 Pt ↑ ⇒ c ↑','Pt used ↑ ⇒ c ↑'],e:['實際功率比標示值小，計算時用的能量 Pt 比真正供應的多。','The real power is lower than the label, so the Pt used in the calculation is more than was really supplied.']},
+  {x:['杯子也吸收了熱量，但計算時沒有考慮','The cup also absorbs heat, but this is ignored'],a:UP,c:'ΔT ↓ ⇒ c ↑',e:['部分能量用來加熱杯子，水的溫度上升較少。','Some energy heats the cup, so the water\'s temperature rises less.']}
+ ]},
+{icon:'♨️',t:['實驗二：量度水的汽化比潛熱','Experiment 2: Specific latent heat of vaporisation of water'],
+ s:['燒杯放在電子天平上，電熱器令水保持沸騰。記錄時間 t 內水減少的質量 m。','A beaker sits on an electronic balance and a heater keeps the water boiling. Record the mass m of water lost in time t.'],
+ f:'ℓ<sub>v</sub> = Pt / m',fn:['m 在分母','m is in the denominator'],
+ items:[
+  {x:['為減少散熱，在燒杯上加蓋','A lid is put on the beaker to reduce heat loss'],a:UP,c:'m ↓ ⇒ ℓ<sub>v</sub> ↑',e:['蒸汽在蓋底凝結成水滴，再滴回燒杯，天平量得減少的質量偏小。','Steam condenses on the lid and drips back, so the measured loss in mass is too small.']},
+  {x:['熱量散失到周圍','Heat is lost to the surroundings'],a:UP,c:'m ↓ ⇒ ℓ<sub>v</sub> ↑',e:['部分能量沒有用來汽化水，汽化的水比應有的少。','Some energy doesn\'t vaporise water, so less water boils away than it should.']},
+  {x:['水還未沸騰便開始計時和記錄質量','Timing and mass readings start before the water is boiling'],a:UP,c:'m ↓ ⇒ ℓ<sub>v</sub> ↑',e:['開始時部分能量用來令水升溫至 100 °C，而不是汽化，所以汽化的水較少。','At first some energy heats the water to 100 °C instead of vaporising it, so less water boils away.']},
+  {x:['水沸騰得太劇烈，有水花濺出燒杯','The water boils so vigorously that some splashes out of the beaker'],a:DOWN,c:'m ↑ ⇒ ℓ<sub>v</sub> ↓',e:['濺出的水不是被汽化的，但也被當作汽化了，m 偏大。','Splashed water wasn\'t vaporised but is counted as if it were, so m is too large.']},
+  {x:['電子天平在實驗前沒有歸零（有固定的零點誤差）','The balance was not zeroed before the experiment (a constant zero error)'],a:NONE,c:'m = m₁ − m₂',e:['m 是兩個讀數之差，零點誤差會互相抵消。','m is the difference of two readings, so the zero error cancels out.']}
+ ]},
+{icon:'🧊',t:['實驗三：用電熱器量度冰的熔解比潛熱','Experiment 3: Specific latent heat of fusion of ice with a heater'],
+ s:['兩個漏斗都裝滿碎冰：實驗漏斗有開動的電熱器，對照漏斗沒有。相同時間 t 內，分別收集熔化的水 m₁ 和 m₂。','Two funnels are filled with crushed ice: the experimental one has a heater switched on, the control one does not. In the same time t, the meltwater m₁ and m₂ is collected.'],
+ f:'ℓ<sub>f</sub> = Pt / (m₁ − m₂)',fn:['(m₁ − m₂) 是由電熱器熔化的冰','(m₁ − m₂) is the ice melted by the heater'],
+ items:[
+  {x:['沒有做對照實驗，直接用 m₁ 計算','No control funnel is used; m₁ alone is used in the calculation'],a:DOWN,c:'m ↑ ⇒ ℓ<sub>f</sub> ↓',e:['m₁ 包括了被室溫熔化的冰，當作是電熱器熔化的，m 偏大。','m₁ includes ice melted by the room\'s heat, wrongly counted as melted by the heater, so m is too large.']},
+  {x:['冰剛從冰箱取出，溫度低於 0 °C','The ice comes straight from the freezer, below 0 °C'],a:UP,c:'m ↓ ⇒ ℓ<sub>f</sub> ↑',e:['部分能量先用來令冰升溫至 0 °C，熔化的冰較少。','Some energy first warms the ice to 0 °C, so less ice melts.']},
+  {x:['電熱器沒有被冰完全覆蓋，部分露出','The heater is not completely covered by ice'],a:UP,c:'m ↓ ⇒ ℓ<sub>f</sub> ↑',e:['露出的部分把能量散失到空氣中，熔化的冰較少。','The exposed part loses energy to the air, so less ice melts.']},
+  {x:['對照漏斗收集水的時間比實驗漏斗短','The control funnel collects water for a shorter time than the experimental one'],a:DOWN,c:'m₂ ↓ ⇒ (m₁ − m₂) ↑ ⇒ ℓ<sub>f</sub> ↓',e:['m₂ 偏小，減去後的 (m₁ − m₂) 偏大。','m₂ is too small, so (m₁ − m₂) is too large.']}
+ ]},
+{icon:'🥄',t:['實驗四：用混合法量度金屬的比熱容量','Experiment 4: Specific heat capacity of a metal by mixtures'],
+ s:['金屬塊在沸水中加熱（當作 100 °C），然後放入杯中的冷水，記錄最終溫度 T。','A metal block is heated in boiling water (taken as 100 °C), then put into cold water in a cup. The final temperature T is recorded.'],
+ f:'c = m<sub>w</sub>c<sub>w</sub>(T − T<sub>w</sub>) / [m(100 − T)]',fn:['T 越高 → 分子越大、分母越小','Higher T → larger numerator, smaller denominator'],
+ items:[
+  {x:['轉移時金屬塊帶了一些沸水進杯','Some boiling water is carried over with the block'],a:UP,c:'T ↑ ⇒ c ↑',e:['額外的沸水也把熱給了冷水，T 偏高，全歸功於金屬。','The extra boiling water also heats the cold water, so T is too high and all of it is credited to the metal.']},
+  {x:['轉移太慢，金屬塊在空氣中冷卻了','The transfer is too slow and the block cools in the air'],a:DOWN,c:'T ↓ ⇒ c ↓',e:['金屬放入水時已低於 100 °C，但計算仍用 100 °C，水吸收的熱較少。','The block is below 100 °C when it enters the water but 100 °C is still used, and the water gains less heat.']},
+  {x:['杯子散熱到周圍','The cup loses heat to the surroundings'],a:DOWN,c:'T ↓ ⇒ c ↓',e:['部分熱量散失，最終溫度偏低。','Some heat escapes, so the final temperature is too low.']},
+  {x:['忽略了杯子吸收的熱量','The heat absorbed by the cup is ignored'],a:DOWN,c:['計算的吸收熱量 ↓ ⇒ c ↓','heat gained (counted) ↓ ⇒ c ↓'],e:['金屬放出的熱有一部分給了杯子，只計水吸收的熱，金屬放出的熱被低估。','Part of the metal\'s heat went into the cup; counting only the water underestimates the heat the metal gave out.']}
+ ]},
+{icon:'🧊',t:['實驗五：用混合法量度冰的熔解比潛熱','Experiment 5: Specific latent heat of fusion of ice by mixtures'],
+ s:['把質量 m 的冰（當作 0 °C）放入暖水中，待冰全部熔化後記錄最終溫度 T。','Ice of mass m (taken as 0 °C) is added to warm water; after all of it melts, the final temperature T is recorded.'],
+ f:'mℓ<sub>f</sub> + mc<sub>w</sub>T = m<sub>w</sub>c<sub>w</sub>(T<sub>w</sub> − T)',fn:['T 越低 → 算出的 ℓ<sub>f</sub> 越大','Lower T → larger calculated ℓ<sub>f</sub>'],
+ items:[
+  {x:['冰的溫度低於 0 °C','The ice is colder than 0 °C'],a:UP,c:'T ↓ ⇒ ℓ<sub>f</sub> ↑',e:['水要額外放熱令冰升溫，最終溫度偏低，這些熱被當成熔解用的熱。','The water gives extra heat to warm the ice, so T is lower, and that heat is counted as latent heat.']},
+  {x:['冰沒有抹乾，表面帶有水','The ice is not dried and has water on its surface'],a:DOWN,c:'T ↑ ⇒ ℓ<sub>f</sub> ↓',e:['m 中有一部分其實是水，真正熔解的冰較少，最終溫度偏高，但計算仍用全部 m。','Part of m is actually water, so less ice really melts and T is higher, yet all of m is used in the calculation.']},
+  {x:['暖水（高於室溫）散熱到周圍','The warm water (above room temperature) loses heat to the surroundings'],a:UP,c:'T ↓ ⇒ ℓ<sub>f</sub> ↑',e:['散失的熱令 T 偏低，被誤當作冰吸收了。','The lost heat makes T too low and is wrongly credited to the ice.']},
+  {x:['冰未完全熔化便讀取最終溫度','The final temperature is read before all the ice has melted'],a:DOWN,c:'T ↑ ⇒ ℓ<sub>f</sub> ↓',e:['溫度仍在下降，太早讀數令 T 偏高。','The temperature is still falling, so reading early gives a T that is too high.']}
+ ]},
+{icon:'🔩',t:['實驗六：用電熱器量度金屬塊的比熱容量','Experiment 6: Specific heat capacity of a metal block with a heater'],
+ s:['金屬塊有兩個孔，分別放電熱器和溫度計。記錄 P、t、金屬塊質量 m 和 ΔT。','A metal block has two holes, one for a heater and one for a thermometer. Record P, t, the block\'s mass m and ΔT.'],
+ f:'c = Pt / (mΔT)',fn:['m 和 ΔT 都在分母','Both m and ΔT are in the denominator'],
+ items:[
+  {x:['溫度計孔內沒有加油','No oil is put in the thermometer hole'],a:UP,c:'ΔT ↓ ⇒ c ↑',e:['溫度計與金屬接觸不良，讀數偏低，量得的 ΔT 偏小。','Poor thermal contact makes the reading too low, so the measured ΔT is too small.']},
+  {x:['金屬塊沒有用隔熱物料包裹','The block is not wrapped in insulation'],a:UP,c:'ΔT ↓ ⇒ c ↑',e:['熱量散失到周圍，金屬塊溫度上升較少。','Heat is lost to the surroundings, so the block warms up less.']},
+  {x:['把金屬塊連電熱器一起稱重，當作 m','The block is weighed together with the heater, and this is used as m'],a:DOWN,c:'m ↑ ⇒ c ↓',e:['m 包括了電熱器的質量，所以偏大。','m includes the heater\'s mass, so it is too large.']},
+  {x:['用較大功率的電熱器，加熱時間相應縮短（同樣的 ΔT）','A higher-power heater is used for a correspondingly shorter time (same ΔT)'],a:NONE,c:'Pt',e:['公式用的是能量 Pt，功率和時間一個大一個小，理論上結果相同。（實際上時間較短，散熱較少，結果會更準確。）','The formula uses the energy Pt; one goes up and the other down, so ideally the result is unchanged. (In practice a shorter time means less heat loss, so it is more accurate.)']}
+ ]}
+];
+const eAns={};
+const CH=[['偏大 ↑','Too large ↑'],['偏小 ↓','Too small ↓'],['無影響','No effect']];
+function renderErr(){
+  let tot=0,ok=0;
+  document.getElementById('eList').innerHTML=EXP.map((ex,i)=>{
+    const items=ex.items.map((it,j)=>{
+      tot++;const k=i+'-'+j,done=eAns[k]!==undefined;if(done&&eAns[k]===it.a)ok++;
+      const btns=CH.map((c,n)=>{let cls='';if(done){if(n===it.a)cls='right';else if(n===eAns[k])cls='wrong';}
+        return `<button class="ch ${cls}" data-k="${k}" data-n="${n}" ${done?'disabled':''}>${LANG==='both'?c[0]+'<br><small>'+c[1]+'</small>':TP(c)}</button>`;}).join('');
+      const fb=done?`<div class="fb" style="margin-top:8px">${eAns[k]===it.a?'<span class="ok">✔</span>':'<span class="no">✘</span>'} <span class="chain">${Array.isArray(it.c)?(LANG==='en'?it.c[1]:it.c[0]):it.c}</span>${TP(it.e)}</div>`:'';
+      return `<div class="item"><div class="irow"><div class="itext">${j+1}. ${TP(it.x)}</div><div class="choices">${btns}</div></div>${fb}</div>`;
+    }).join('');
+    return `<div class="card expcard"><div class="setup"><div><h3>${ex.icon} ${TP(ex.t)}</h3><div style="color:var(--muted);font-size:15.5px">${TP(ex.s)}</div></div>
+      <div class="formula">${ex.f}<small>${TP(ex.fn)}</small></div></div>
+      <div style="margin-top:10px;font-weight:900;font-size:14px;color:var(--muted)">${T('以下各項會令計算值：','Each of these makes the calculated value:')}</div>${items}</div>`;
+  }).join('');
+  document.querySelectorAll('#eList .ch').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(eAns[k]!==undefined)return;eAns[k]=+b.dataset.n;
+    const y=window.scrollY;renderErr();window.scrollTo(0,y);});
+  document.getElementById('eScore').innerHTML=T('得分','Score')+` ${ok} / ${tot}`;
+}
+
+/* ================= language ================= */
+function setLang(l){
+  LANG=l;document.body.className='lang-'+l;
+  document.documentElement.lang=l==='en'?'en':'zh-Hant';
+  document.querySelectorAll('.lang-switch button').forEach(b=>b.classList.toggle('on',b.dataset.lang===l));
+  drawExplorer();renderGQ();renderErr();
+  try{localStorage.setItem('heatc-lang',l);}catch(e){}
+}
+document.querySelectorAll('.lang-switch button').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+let saved='zh';try{saved=localStorage.getItem('heatc-lang')||'zh';}catch(e){}
+if(location.hash==='#both')saved='both';
+setLang(['zh','en','both'].includes(saved)?saved:'zh');
+</script>
+</body>
+</html>
